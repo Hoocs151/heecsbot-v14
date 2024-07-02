@@ -15,7 +15,7 @@ module.exports = {
     embedColor: "#E88D67",
     embedDev: "#322C2B",
 
-    // CHANNEL IDS HIhi //
+    // CHANNEL IDS //
     bugReportChannel: "1255155199329177672",
 
 }
