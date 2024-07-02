@@ -1,0 +1,22 @@
+{
+  "name": "Hoocs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "array-move-item": "^1.0.0",
+    "ascii-table": "^0.0.9",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5",
+    "ffmpeg-static": "^5.2.0",
+    "fs": "^0.0.1-security",
+    "mongoose": "^6.0.12",
+    "path": "^0.12.7"
+  }
+}
