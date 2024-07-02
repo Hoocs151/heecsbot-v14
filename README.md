@@ -1,4 +1,4 @@
-# heecsbot-v14
+# heecsbot-v14 🚀
 
 ![heecsbot-v14](https://img.shields.io/badge/Discord.js-v14-blue)
 ![Node.js](https://img.shields.io/badge/Node.js-v16%2B-brightgreen)
@@ -6,20 +6,19 @@
 
 heecsbot-v14 is a Discord bot built using Discord.js v14, designed to handle slash commands efficiently. This bot provides a robust template for creating and managing various Discord slash commands, making it easier to build and customize your own Discord bot.
 
-## Table of Contents
+## Table of Contents 📑
 
-- [Features](#features)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-- [Acknowledgements](#acknowledgements)
+- [Features](#features) ✨
+- [Getting Started](#getting-started) 🚀
+  - [Prerequisites](#prerequisites) 📋
+  - [Installation](#installation) 🛠️
+- [Usage](#usage) ⚙️
+- [Contributing](#contributing) 🤝
+- [License](#license) 📜
+- [Contact](#contact) 📬
+- [Acknowledgements](#acknowledgements) 🙏
 
-
-## Features
+## Features ✨
 
 - **Slash Command Handling**: Easily manage and execute slash commands.
 - **Modular Structure**: Organized codebase for better scalability and maintenance.
@@ -27,15 +26,15 @@ heecsbot-v14 is a Discord bot built using Discord.js v14, designed to handle sla
 - **Event Handling**: Built-in support for handling different Discord events.
 - **COMING SOON**: .......
 
-## Getting Started
+## Getting Started 🚀
 
-### Prerequisites
+### Prerequisites 📋
 
 - [Node.js](https://nodejs.org/) v16 or higher
 - [Discord.js](https://discord.js.org/) v14
 - A Discord bot token. You can get one by creating a bot on the [Discord Developer Portal](https://discord.com/developers/applications).
 
-### Installation
+### Installation 🛠️
 
 1. **Clone the repository:**
     ```sh
@@ -62,24 +61,24 @@ heecsbot-v14 is a Discord bot built using Discord.js v14, designed to handle sla
     npm start
     ```
 
-## Usage
+## Usage ⚙️
 
 - Add your commands in the `src/commands` directory.
 - Add your event handlers in the `src/events` directory.
 
-## Contributing
+## Contributing 🤝
 
 Contributions are welcome! Please open an issue or submit a pull request with your changes.
 
-## License
+## License 📜
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Contact
+## Contact 📬
 
 For any questions or suggestions, feel free to open an issue or contact me via [GitHub](https://github.com/Hoocs151).
 
-## Acknowledgements
+## Acknowledgements 🙏
 
 This project is based on the [DiscordBotV14-template](https://github.com/Kkkermit/DiscordBotV14-template).
 
