@@ -37,17 +37,20 @@ heecsbot-v14 is a Discord bot built using Discord.js v14, designed to handle sla
 ### Installation 🛠️
 
 1. **Clone the repository:**
+
     ```sh
     git clone https://github.com/Hoocs151/heecsbot-v14.git
     cd heecsbot-v14
     ```
 
 2. **Install dependencies:**
+
     ```sh
     npm install
     ```
 
 3. **Create a `.env` file in the root directory and add your bot token:**
+
     ```plaintext
     DISCORD_TOKEN=your-bot-token
     CLIENT_ID=your-client-id
@@ -57,6 +60,7 @@ heecsbot-v14 is a Discord bot built using Discord.js v14, designed to handle sla
     ```
 
 4. **Start the bot:**
+
     ```sh
     npm start
     ```
