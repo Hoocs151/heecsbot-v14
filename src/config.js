@@ -4,16 +4,12 @@ module.exports = {
     prefix: "?", // Default prefix
     status: "dnd",
     eventListeners: 100,
-    dev: "Hoocs",
-    devBy: "| Developed by Hoocs",
     developers: "627013557695021087",
     noPermsMessage: `You **do not** have the permission to do that!`,
 
     // Logging Channels //
     slashCommandLoggingChannel: "1255137359205240853",
     prefixCommandLoggingChannel: "1255137359205240853",
-
-    // EMOJIS //
 
     // EMBED COLOR //
     embedColor: "#E88D67",
