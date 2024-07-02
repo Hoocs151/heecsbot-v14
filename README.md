@@ -6,12 +6,26 @@
 
 heecsbot-v14 is a Discord bot built using Discord.js v14, designed to handle slash commands efficiently. This bot provides a robust template for creating and managing various Discord slash commands, making it easier to build and customize your own Discord bot.
 
+## Table of Contents
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgements](#acknowledgements)
+
+
 ## Features
 
 - **Slash Command Handling**: Easily manage and execute slash commands.
 - **Modular Structure**: Organized codebase for better scalability and maintenance.
 - **Environment Configuration**: Use `.env` file for sensitive configurations.
 - **Event Handling**: Built-in support for handling different Discord events.
+- **COMING SOON**: .......
 
 ## Getting Started
 
