@@ -2,7 +2,7 @@ const config = require('../config');
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const mongodbURL = process.env.mongodb;
+const mongodbURL = process.env.MONGODB;
 
 module.exports = {
     name: 'ready',

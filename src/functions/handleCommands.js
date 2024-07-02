@@ -4,8 +4,8 @@ const fs = require('fs');
 const ascii = require("ascii-table");
 const table = new ascii().setHeading("File Name", "Status");
 
-const clientId = process.env.clientid; 
-const guildId = process.env.guildid; 
+const CLIENT_ID = process.env.CLIENT_ID; 
+const GUILD_ID = process.env.GUILD_ID; 
 
 module.exports = (client) => {
     client.handleCommands = async (commandFolders, path) => {
@@ -51,18 +51,18 @@ module.exports = (client) => {
 
         const rest = new REST({
             version: '9'
-        }).setToken(process.env.token);
+        }).setToken(process.env.DISCORD_TOKEN);
 
         (async () => {
             try {
                 client.logs.info(`[FUNCTION] Started refreshing application (/) commands.`);
 
                 await rest.put(
-                    Routes.applicationCommands(clientId), {
+                    Routes.applicationCommands(CLIENT_ID), {
                         body: client.commandArray
                     },
                 ).catch((error) => {
-                    console.error(`${color.red}[${getTimestamp()}] [FUNCTION] Error while refreshing application (/) commands. \n${color.red}[${getTimestamp()}] [FUNCTION] Check if your clientID is correct and matches your bots token:`, error);
+                    console.error(`${color.red}[${getTimestamp()}] [FUNCTION] Error while refreshing application (/) commands. \n${color.red}[${getTimestamp()}] [FUNCTION] Check if your CLIENT_ID is correct and matches your bots token:`, error);
                 });
 
                 client.logs.success(`[FUNCTION] Successfully reloaded application (/) commands.`);

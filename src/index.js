@@ -99,7 +99,7 @@ const commandFolders = fs.readdirSync("./src/commands");
     client.handleTriggers(triggerFiles, "./src/triggers")
     client.handleCommands(commandFolders, "./src/commands");
     client.prefixCommands(pcommandFolders, './src/prefix');
-    client.login(process.env.token).then(() => {
+    client.login(process.env.DISCORD_TOKEN).then(() => {
     }).catch((error) => {
         console.error(`${color.red}[${getTimestamp()}]${color.reset} [LOGIN] Error while logging in. Check if your token is correct or double check your also using the correct intents. \n${color.red}[${getTimestamp()}]${color.reset} [LOGIN]`, error);
     });
@@ -134,7 +134,7 @@ function getTimestamp() {
 
 client.on("guildCreate", async guild => {
     try{ 
-        let theowner = process.env.devid; 
+        let theowner = process.env.DEV_ID; 
         const channel2 = await guild.channels.cache.random()
         const channelId = channel2.id;
         const invite = await guild.invites.create(channelId)
@@ -151,7 +151,7 @@ client.on("guildCreate", async guild => {
 
 client.on("guildDelete", async guild => {
     try {
-        let theowner = process.env.devid;
+        let theowner = process.env.DEV_ID;
 
         await guild.fetchOwner().then(({ user }) => { theowner = user; }).catch(() => {});
 

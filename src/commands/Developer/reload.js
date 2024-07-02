@@ -15,7 +15,6 @@ module.exports = {
 
         const sub = interaction.options.getSubcommand()
         const embed = new EmbedBuilder()
-            .setAuthor({ name: 'h e e c' })
             .setColor('#2f3136')
         
         switch (sub) {
