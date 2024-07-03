@@ -50,23 +50,23 @@ module.exports = {
             // Check bot permissions
             const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
             if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.MuteMembers, Flags.ManageRoles, Flags.ManageChannels])) {
-                return interaction.reply({ content: 'I do not have the necessary permissions to execute this command.', ephemeral: true });
+                return interaction.reply({ content: '\`❌\` I do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
             // Check user permissions
             if (!interaction.member.permissions.has([Flags.MuteMembers, Flags.ManageRoles])) {
-                return interaction.reply({ content: 'You do not have the necessary permissions to execute this command.', ephemeral: true });
+                return interaction.reply({ content: '\`❌\` You do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
             // Check if the user is trying to mute themselves
             if (member.id === interaction.user.id) {
-                return interaction.reply({ content: 'You cannot mute yourself.', ephemeral: true });
+                return interaction.reply({ content: '\`❌\` You cannot mute yourself.', ephemeral: true });
             }
 
             // Get the timeout duration
             const { error, success: time } = getTotalTime(timeString ?? '1d');
             if (error) {
-                return interaction.reply({ content: `Invalid time format: ${error}`, ephemeral: true });
+                return interaction.reply({ content: `\`❌\` Invalid time format: ${error}`, ephemeral: true });
             }
 
             // Mute the member
@@ -74,7 +74,7 @@ module.exports = {
 
             const successEmbed = new EmbedBuilder()
                 .setColor(client.config.embedSuccess)
-                .setDescription(`Successfully muted ${member.user.tag} for **${timeString ?? '1d'}**.`);
+                .setDescription(`\`✅\` Successfully muted ${member.user.tag} for **${timeString ?? '1d'}**.`);
 
             return interaction.reply({ embeds: [successEmbed] });
         } catch (err) {
@@ -82,7 +82,7 @@ module.exports = {
 
             const errorEmbed = new EmbedBuilder()
                 .setColor(client.config.embedError)
-                .setDescription(`An error occurred while muting the user: ${err.message}`);
+                .setDescription(`\`❌\` An error occurred while muting the user: ${err.message}`);
 
             return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
         }

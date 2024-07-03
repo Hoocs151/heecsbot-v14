@@ -17,17 +17,17 @@ module.exports = {
 
             // Check bot permissions
             if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.ManageRoles, Flags.ManageGuild])) {
-                return interaction.reply({ content: 'I do not have the necessary permissions to execute this command.', ephemeral: true });
+                return interaction.reply({ content: '\`❌\` I do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
             // Check user permissions
             if (!interaction.member.permissions.has(Flags.ManageGuild)) {
-                return interaction.reply({ content: 'You do not have the necessary permissions to execute this command.', ephemeral: true });
+                return interaction.reply({ content: '\`❌\` You do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
             // Check role hierarchy
             if (botMember.roles.highest.comparePositionTo(role) < 0) {
-                return interaction.reply({ content: `I cannot manage the ${role.name} role due to role hierarchy.`, ephemeral: true });
+                return interaction.reply({ content: `\`❌\` I cannot manage the ${role.name} role due to role hierarchy.`, ephemeral: true });
             }
 
             const wait = require('node:timers/promises').setTimeout;
@@ -35,7 +35,7 @@ module.exports = {
             const initialEmbed = new EmbedBuilder()
                 .setColor(client.config.embedSuccess)
                 .setTitle('Remove Role from All Members')
-                .setDescription(`I will remove the role ${role} from all members of this server.\nThis process may take a few minutes, so please be patient.`)
+                .setDescription(`\`✅\` I will remove the role ${role} from all members of this server.\nThis process may take a few minutes, so please be patient.`)
                 .setAuthor({ name: 'REMOVE ROLE ALL', iconURL: client.user.displayAvatarURL({ format: 'png', size: 512, dynamic: true }) })
                 .setThumbnail(role.iconURL({ format: 'png', size: 512, dynamic: true }) || interaction.guild.iconURL({ format: 'png', size: 512, dynamic: true }))
                 .setTimestamp();
@@ -76,7 +76,7 @@ module.exports = {
             const completionEmbed = new EmbedBuilder()
                 .setColor(client.config.embedSuccess)
                 .setTitle('Remove Role from All Members')
-                .setDescription(`Process completed! ${count} of ${interaction.guild.memberCount} users have successfully had the ${role} role removed!`)
+                .setDescription(`\`✅\` Process completed! ${count} of ${interaction.guild.memberCount} users have successfully had the ${role} role removed!`)
                 .setTimestamp()
                 .setFooter({ text: 'Completed', iconURL: client.user.displayAvatarURL({ format: 'png', size: 512, dynamic: true }) });
 

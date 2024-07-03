@@ -38,13 +38,13 @@ module.exports = {
 
         // Check user permissions
         if (!interaction.member.permissions.has(Flags.ManageChannels)) {
-            return interaction.reply({ content: 'You do not have the necessary permissions to execute this command.', ephemeral: true });
+            return interaction.reply({ content: '\`❌\` You do not have the necessary permissions to execute this command.', ephemeral: true });
         }
 
         // Check bot permissions
         const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
         if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.ManageChannels])) {
-            return interaction.reply({ content: 'I do not have the necessary permissions to execute this command.', ephemeral: true });
+            return interaction.reply({ content: '\`❌\` I do not have the necessary permissions to execute this command.', ephemeral: true });
         }
 
         // Activate slowmode
@@ -52,13 +52,13 @@ module.exports = {
             await channel.setRateLimitPerUser(duration);
             const successEmbed = new EmbedBuilder()
                 .setColor(client.config.embedSuccess)
-                .setDescription(`Slowmode has been ${duration === 0 ? 'disabled' : `set to ${slowmodeDurations.find(d => d.value === duration).name}`}.`);
+                .setDescription(`\`✅\` Slowmode has been ${duration === 0 ? 'disabled' : `set to ${slowmodeDurations.find(d => d.value === duration).name}`}.`);
             await interaction.reply({ embeds: [successEmbed] });
         } catch (err) {
             console.error(`Command: 'slowmode' has error: ${err.message}.`);
             const errorEmbed = new EmbedBuilder()
                 .setColor(client.config.embedError)
-                .setDescription(`An error occurred while setting slowmode: ${err.message}`);
+                .setDescription(`\`❌\` An error occurred while setting slowmode: ${err.message}`);
             await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
         }
     },
