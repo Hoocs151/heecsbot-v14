@@ -33,7 +33,7 @@ module.exports = {
             const wait = require('node:timers/promises').setTimeout;
 
             const initialEmbed = new EmbedBuilder()
-                .setColor(client.config.embedColor || '#0099ff')
+                .setColor(client.config.embedSuccess)
                 .setTitle('Add Role to All Members')
                 .setDescription(`I will add the role ${role} to all members of this server.\nThis process may take a few minutes, so please be patient.`)
                 .setAuthor({ name: 'ADD ROLE ALL', iconURL: client.user.displayAvatarURL({ format: 'png', size: 512, dynamic: true }) })
@@ -59,7 +59,7 @@ module.exports = {
                     }
 
                     const progressEmbed = new EmbedBuilder()
-                        .setColor(client.config.embedColor || '#0099ff')
+                        .setColor(client.config.embedSuccess)
                         .setTitle('Add Role to All Members')
                         .setDescription(`**Total Members:** ${interaction.guild.memberCount}\n**Processed:** ${count + skipped}\n**Role Added to:** ${count} members\n**Skipped:** ${skipped} members (Already had the role)`)
                         .setFooter({ text: 'Progressing...', iconURL: client.user.displayAvatarURL({ format: 'png', size: 512, dynamic: true }) })
@@ -74,7 +74,7 @@ module.exports = {
             }
 
             const completionEmbed = new EmbedBuilder()
-                .setColor(client.config.embedColor || '#0099ff')
+                .setColor(client.config.embedSuccess)
                 .setTitle('Add Role to All Members')
                 .setDescription(`Process completed! ${count} of ${interaction.guild.memberCount} users have successfully received the ${role} role!`)
                 .setTimestamp()
@@ -85,7 +85,7 @@ module.exports = {
             console.error(`Error executing addroleall command: ${error.message}`);
 
             const errorMessage = new EmbedBuilder()
-                .setColor('Red')
+                .setColor(client.config.embedError)
                 .setTitle('Error')
                 .setDescription(`\`❌\` An error occurred while adding the role. Please try again later.`)
                 .setTimestamp();

@@ -29,14 +29,14 @@ module.exports = {
                 await data.save();
 
                 const replyMessage = new EmbedBuilder()
-                    .setColor('Green')
+                    .setColor(client.config.embedSuccess)
                     .setDescription(`\`✅\` I have set you AFK${reasonInput ? ` with the reason: **${reasonInput}**` : ''}`)
                     .setTimestamp();
 
                 return interaction.reply({ embeds: [replyMessage], ephemeral: true });
             } else {
                 const alreadyAfkMessage = new EmbedBuilder()
-                    .setColor('Red')
+                    .setColor(client.config.embedError)
                     .setDescription(`\`❌\` You already set yourself AFK. To stop this from happening, send a message in any channel!`)
                     .setTimestamp();
 
@@ -46,7 +46,7 @@ module.exports = {
             console.error(`Error executing AFK command: ${error.message}`);
 
             const errorMessage = new EmbedBuilder()
-                .setColor('Red')
+                .setColor(client.config.embedError)
                 .setDescription(`\`❌\` An error occurred while setting you AFK. Please try again later.`)
                 .setTimestamp();
 

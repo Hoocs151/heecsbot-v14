@@ -14,7 +14,10 @@ module.exports = {
     // EMBED COLOR //
     embedColor: "#E88D67",
     embedDev: "#322C2B",
-
+    embedError: "#ff3333",
+    embedSuccess: "#59ff6d",
+    embedWarning: "#fafc65",
+    
     // CHANNEL IDS //
     bugReportChannel: "1255155199329177672",
 

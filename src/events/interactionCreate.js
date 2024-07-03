@@ -76,7 +76,7 @@ module.exports = {
             console.error(`${color.red}[${getTimestamp()}] [INTERACTION_CREATE] Error while executing command. \n${color.red}[${getTimestamp()}] [INTERACTION_CREATE] Please check you are using the correct execute method: "async execute(interaction, client)":`, error);
 
             const errorEmbed = new EmbedBuilder()
-                .setColor("Red")
+                .setColor(client.config.embedError)
                 .setDescription(`There was an error while executing this command!\n\`\`\`${error}\`\`\``);
 
             await interaction.reply({ embeds: [errorEmbed], ephemeral: true });

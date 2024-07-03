@@ -33,7 +33,7 @@ module.exports = {
             const wait = require('node:timers/promises').setTimeout;
 
             const initialEmbed = new EmbedBuilder()
-                .setColor(client.config.embedColor || '#0099ff')
+                .setColor(client.config.embedSuccess)
                 .setTitle('Remove Role from All Members')
                 .setDescription(`I will remove the role ${role} from all members of this server.\nThis process may take a few minutes, so please be patient.`)
                 .setAuthor({ name: 'REMOVE ROLE ALL', iconURL: client.user.displayAvatarURL({ format: 'png', size: 512, dynamic: true }) })
@@ -59,7 +59,7 @@ module.exports = {
                     }
 
                     const progressEmbed = new EmbedBuilder()
-                        .setColor(client.config.embedColor || '#0099ff')
+                        .setColor(client.config.embedSuccess)
                         .setTitle('Remove Role from All Members')
                         .setDescription(`**Total Members:** ${interaction.guild.memberCount}\n**Processed:** ${count + skipped}\n**Role Removed from:** ${count} members\n**Skipped:** ${skipped} members (Did not have the role)`)
                         .setFooter({ text: 'Progressing...', iconURL: client.user.displayAvatarURL({ format: 'png', size: 512, dynamic: true }) })
@@ -74,7 +74,7 @@ module.exports = {
             }
 
             const completionEmbed = new EmbedBuilder()
-                .setColor(client.config.embedColor || '#0099ff')
+                .setColor(client.config.embedSuccess)
                 .setTitle('Remove Role from All Members')
                 .setDescription(`Process completed! ${count} of ${interaction.guild.memberCount} users have successfully had the ${role} role removed!`)
                 .setTimestamp()
@@ -85,7 +85,7 @@ module.exports = {
             console.error(`Error executing removeroleall command: ${error.message}`);
 
             const errorMessage = new EmbedBuilder()
-                .setColor('Red')
+                .setColor(client.config.embedError)
                 .setTitle('Error')
                 .setDescription(`\`❌\` An error occurred while removing the role. Please try again later.`)
                 .setTimestamp();

@@ -25,7 +25,7 @@ module.exports = {
                 });
 
                 const welcomeBackMessage = new EmbedBuilder()
-                    .setColor('Green')
+                    .setColor(client.config.embedSuccess)
                     .setDescription(`\`✅\` Welcome back, ${message.author.username}! I have removed your AFK status.`)
                     .setTimestamp();
 
@@ -41,7 +41,7 @@ module.exports = {
 
                 if (mentionedAFK) {
                     const afkMentionMessage = new EmbedBuilder()
-                        .setColor('Yellow')
+                        .setColor(client.config.embedWarning)
                         .setDescription(`\`💤\` ${user.username} is currently AFK. Reason: ${mentionedAFK.reason || 'No reason provided.'}`)
                         .setTimestamp();
 
@@ -84,7 +84,7 @@ module.exports = {
         if (!command) {
             try {
                 const embed = new EmbedBuilder()
-                    .setColor("Red")
+                    .setColor(client.config.embedError)
                     .setTitle(`${client.user.username} prefix system`)
                     .setDescription(`> The command you tried **does not exist**. \n> To see **all** commands, use \`\`${client.config.prefix}help\`\``);
 
@@ -106,7 +106,7 @@ module.exports = {
             console.error(`${color.red}[${getTimestamp()}] [MESSAGE_CREATE] Error while executing command. \n${color.red}[${getTimestamp()}] [MESSAGE_CREATE] Please check you are using the correct execute method: "async execute(message, client, args)":`, error);
 
             const embed = new EmbedBuilder()
-                .setColor("Red")
+                .setColor(client.config.embedError)
                 .setDescription(`There was an error while executing this command!\n\`\`\`${error}\`\`\``);
 
             await message.reply({ embeds: [embed], ephemeral: true });
