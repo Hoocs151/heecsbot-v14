@@ -8,8 +8,7 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionsBitField.Administrator),
     async execute(interaction, client) {
         try {
-            await interaction.deferReply();  // Defer the reply immediately
-
+            await interaction.deferReply();
             const guilds = client.guilds.cache;
             const pageSize = 5;
             const pages = Math.ceil(guilds.size / pageSize);
