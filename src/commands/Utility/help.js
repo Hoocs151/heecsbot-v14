@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder, StringSelectMenuBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
-const fs = require('fs');
+const { SlashCommandBuilder, EmbedBuilder, StringSelectMenuBuilder, ActionRowBuilder, ComponentType } = require('discord.js');
+const fs = require('fs').promises;
 const path = require('path');
 
 module.exports = {
@@ -9,12 +9,14 @@ module.exports = {
     async execute(interaction, client) {
         const commands = [];
         const commandsPath = path.join(__dirname, '..');
+        const cache = {};
 
-        function readCommands(dir) {
-            const files = fs.readdirSync(dir, { withFileTypes: true });
+        async function readCommands(dir) {
+            if (cache[dir]) return cache[dir];
+            const files = await fs.readdir(dir, { withFileTypes: true });
             for (const file of files) {
                 if (file.isDirectory()) {
-                    readCommands(path.join(dir, file.name));
+                    await readCommands(path.join(dir, file.name));
                 } else if (file.name.endsWith('.js')) {
                     const command = require(path.join(dir, file.name));
                     if (command.data && command.data.name) {
@@ -28,9 +30,10 @@ module.exports = {
                     }
                 }
             }
+            cache[dir] = commands;
         }
 
-        readCommands(commandsPath);
+        await readCommands(commandsPath);
 
         const commandCategories = {};
         commands.forEach(command => {
@@ -89,6 +92,7 @@ module.exports = {
             embeds: [mainEmbed],
             components: [row],
             fetchReply: true,
+            ephemeral: true,
         });
 
         const collector = response.createMessageComponentCollector({
@@ -100,99 +104,32 @@ module.exports = {
             const selectedCategory = i.values[0];
             
             if (selectedCategory === 'main') {
-                await i.update({ embeds: [mainEmbed], components: [row] });
+                await i.update({ embeds: [mainEmbed], components: [row], ephemeral: true });
                 return;
             }
 
             const selectedCommands = commandCategories[selectedCategory];
 
-            const itemsPerPage = 5;
-            const totalPages = Math.ceil(selectedCommands.length / itemsPerPage);
-            let currentPage = 0;
+            const embed = new EmbedBuilder()
+                .setTitle(`📂 ${selectedCategory}: `)
+                .setColor(0x00FFFF);
 
-            const generateEmbed = (page) => {
-                const embed = new EmbedBuilder()
-                    .setTitle(`📂 ${selectedCategory}: `)
-                    .setColor(0x00FFFF)
-                    .setFooter({ text: `Page ${page + 1} of ${totalPages}` });
-
-                const start = page * itemsPerPage;
-                const end = start + itemsPerPage;
-                const commandsToShow = selectedCommands.slice(start, end);
-
-                commandsToShow.forEach(command => {
-                    embed.addFields({ 
-                        name: `/${command.name}`, 
-                        value: `**Description**: ${command.description || 'No description provided.'}`,
-                        inline: false 
-                    });
-                });
-
-                return embed;
-            };
-
-            let currentEmbed = generateEmbed(currentPage);
-
-            const paginationRow = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId('prev')
-                        .setLabel('Previous')
-                        .setStyle(ButtonStyle.Primary)
-                        .setDisabled(currentPage === 0),
-                    new ButtonBuilder()
-                        .setCustomId('next')
-                        .setLabel('Next')
-                        .setStyle(ButtonStyle.Primary)
-                        .setDisabled(currentPage === totalPages - 1)
-                );
-
-            await i.update({ embeds: [currentEmbed], components: [row, paginationRow] });
-
-            const buttonCollector = response.createMessageComponentCollector({
-                componentType: ComponentType.Button,
-                time: 60000,
-            });
-
-            buttonCollector.on('collect', async b => {
-                if (b.customId === 'prev') {
-                    currentPage--;
-                } else if (b.customId === 'next') {
-                    currentPage++;
-                }
-
-                currentEmbed = generateEmbed(currentPage);
-                await b.update({
-                    embeds: [currentEmbed],
-                    components: [
-                        row,
-                        paginationRow
-                            .setComponents(
-                                new ButtonBuilder()
-                                    .setCustomId('prev')
-                                    .setLabel('Previous')
-                                    .setStyle(ButtonStyle.Primary)
-                                    .setDisabled(currentPage === 0),
-                                new ButtonBuilder()
-                                    .setCustomId('next')
-                                    .setLabel('Next')
-                                    .setStyle(ButtonStyle.Primary)
-                                    .setDisabled(currentPage === totalPages - 1)
-                            )
-                    ],
+            selectedCommands.forEach(command => {
+                embed.addFields({ 
+                    name: `/${command.name}`, 
+                    value: `${command.description || 'No description provided.'}`,
+                    inline: false 
                 });
             });
 
-            buttonCollector.on('end', async () => {
-                await interaction.editReply({ components: [row] });
-            });
+            await i.update({ embeds: [embed], components: [row], ephemeral: true });
         });
 
         collector.on('end', async collected => {
             if (!collected.size) {
-                await interaction.editReply({ content: 'No category selected within the time limit.', components: [] });
+                await interaction.editReply({ content: 'No category selected within the time limit.', components: [], ephemeral: true });
             } else {
-                await interaction.editReply({ components: [] });
+                await interaction.editReply({ components: [], ephemeral: true });
             }
         });
     },
