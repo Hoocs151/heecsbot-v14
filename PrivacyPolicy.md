@@ -52,12 +52,6 @@ Nenechi is not intended for use by individuals under the age of 13. We do not kn
 
 We may update this Privacy Policy periodically. We will post the latest version on our GitHub repository with the updated date. Your continued use of Nenechi after any changes indicates your acceptance of the new terms.
 
-## 10. Contact Us
-
-If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at:
-
-Discord: @senawka<br>
-Twitter: @senawka
 
 ---
 
