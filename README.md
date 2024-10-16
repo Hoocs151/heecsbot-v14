@@ -33,7 +33,7 @@ heecsbot-v14 is a Discord bot built using Discord.js v14, designed to handle sla
 - [Node.js](https://nodejs.org/) v16 or higher
 - [Discord.js](https://discord.js.org/) v14
 - A Discord bot token. You can get one by creating a bot on the [Discord Developer Portal](https://discord.com/developers/applications).
-
+ 
 ### Installation 🛠️
 
 1. **Clone the repository:**
