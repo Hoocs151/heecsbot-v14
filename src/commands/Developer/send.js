@@ -35,7 +35,6 @@ module.exports = {
         const channel = interaction.options.getChannel('channel');
         const user = interaction.options.getUser('user');
 
-        // Ensure only relevant option is provided
         if (type === 'channel' && !channel) {
             return interaction.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` You must specify a channel when type is set to Channel.')], ephemeral: true });
         }
@@ -97,12 +96,10 @@ module.exports = {
             const embedTitle = response.fields.getTextInputValue('embed_title');
             let embedColor = response.fields.getTextInputValue('embed_color') || client.config.embedSuccess || '#4052d6';
 
-            // Validate embed mode input
             if (embedMode && !['on', 'off'].includes(embedMode)) {
                 return response.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` Invalid embed mode. Please enter "on" or "off".')], ephemeral: true });
             }
 
-            // Validate color format
             const colorPattern = /^#[0-9A-F]{6}$/i;
             if (!colorPattern.test(embedColor)) {
                 embedColor = client.config.embedSuccess || '#4052d6'; // Fallback to default color if invalid

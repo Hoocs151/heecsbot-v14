@@ -36,18 +36,15 @@ module.exports = {
         const duration = parseInt(interaction.options.getString('duration'), 10);
         const channel = interaction.channel;
 
-        // Check user permissions
         if (!interaction.member.permissions.has(Flags.ManageChannels)) {
             return interaction.reply({ content: '\`❌\` You do not have the necessary permissions to execute this command.', ephemeral: true });
         }
 
-        // Check bot permissions
         const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
         if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.ManageChannels])) {
             return interaction.reply({ content: '\`❌\` I do not have the necessary permissions to execute this command.', ephemeral: true });
         }
 
-        // Activate slowmode
         try {
             await channel.setRateLimitPerUser(duration);
             const successEmbed = new EmbedBuilder()

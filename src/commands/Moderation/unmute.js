@@ -12,23 +12,19 @@ module.exports = {
         const member = interaction.options.getMember('user');
 
         try {
-            // Check bot permissions
             const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
             if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.MuteMembers, Flags.ManageRoles])) {
                 return interaction.reply({ content: '\`❌\` I do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
-            // Check user permissions
             if (!interaction.member.permissions.has([Flags.MuteMembers, Flags.ManageRoles])) {
                 return interaction.reply({ content: '\`❌\` You do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
-            // Check if the user is trying to unmute themselves
             if (member.id === interaction.user.id) {
                 return interaction.reply({ content: '\`❌\` You cannot unmute yourself.', ephemeral: true });
             }
 
-            // Unmute the member
             await member.timeout(null, `\`✅\` ${interaction.user.id} removed user from timeout`);
 
             const successEmbed = new EmbedBuilder()

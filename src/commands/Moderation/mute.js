@@ -16,9 +16,8 @@ module.exports = {
         const member = interaction.options.getMember('user');
         const timeString = interaction.options.getString('time');
 
-        // Function to convert time string to milliseconds
         function getTotalTime(time) {
-            if (!time) return { success: 28 * 86400000 }; // Default to 28 days
+            if (!time) return { success: 28 * 86400000 };
             const match = time.match(/^(\d+)([smhd])$/);
             if (!match) return { error: 'Invalid time format. Use s, m, h, or d for seconds, minutes, hours, or days respectively.' };
 
@@ -47,29 +46,24 @@ module.exports = {
         }
 
         try {
-            // Check bot permissions
             const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
             if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.MuteMembers, Flags.ManageRoles, Flags.ManageChannels])) {
                 return interaction.reply({ content: '\`❌\` I do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
-            // Check user permissions
             if (!interaction.member.permissions.has([Flags.MuteMembers, Flags.ManageRoles])) {
                 return interaction.reply({ content: '\`❌\` You do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
-            // Check if the user is trying to mute themselves
             if (member.id === interaction.user.id) {
                 return interaction.reply({ content: '\`❌\` You cannot mute yourself.', ephemeral: true });
             }
 
-            // Get the timeout duration
             const { error, success: time } = getTotalTime(timeString ?? '1d');
             if (error) {
                 return interaction.reply({ content: `\`❌\` Invalid time format: ${error}`, ephemeral: true });
             }
 
-            // Mute the member
             await member.timeout(time, `${interaction.user.id} put user in timeout`);
 
             const successEmbed = new EmbedBuilder()

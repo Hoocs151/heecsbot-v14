@@ -12,20 +12,16 @@ module.exports = {
         const role = interaction.options.getRole('role');
 
         try {
-            // Fetch the bot's member object to ensure it's up-to-date
             const botMember = await interaction.guild.members.fetch(client.user.id);
 
-            // Check bot permissions
             if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.ManageRoles, Flags.ManageGuild])) {
                 return interaction.reply({ content: '\`❌\` I do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
-            // Check user permissions
             if (!interaction.member.permissions.has(Flags.ManageGuild)) {
                 return interaction.reply({ content: '\`❌\` You do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
-            // Check role hierarchy
             if (botMember.roles.highest.comparePositionTo(role) < 0) {
                 return interaction.reply({ content: `\`❌\` I cannot manage the ${role.name} role due to role hierarchy.`, ephemeral: true });
             }

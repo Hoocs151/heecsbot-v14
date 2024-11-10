@@ -86,7 +86,7 @@ module.exports = {
                 const embed = new EmbedBuilder()
                     .setColor(client.config.embedError)
                     .setTitle(`${client.user.username} prefix system`)
-                    .setDescription(`> The command you tried **does not exist**. \n> To see **all** commands, use \`\`${client.config.prefix}help\`\``);
+                    .setDescription(`> The command you tried **does not exist**. \n> To see **all** commands, use \`\`/help\`\``);
 
                 return message.reply({ embeds: [embed], ephemeral: true });
             } catch (error) {
