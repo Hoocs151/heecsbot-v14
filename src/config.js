@@ -8,8 +8,8 @@ module.exports = {
     noPermsMessage: `You **do not** have the permission to do that!`,
 
     // Logging Channels //
-    slashCommandLoggingChannel: "1255137359205240853",
-    prefixCommandLoggingChannel: "1255137359205240853",
+    slashCommandLoggingChannel: "id",
+    prefixCommandLoggingChannel: "id",
 
     // EMBED COLOR //
     embedColor: "#E88D67",
@@ -19,6 +19,6 @@ module.exports = {
     embedWarning: "#fafc65",
     
     // CHANNEL IDS //
-    bugReportChannel: "1255155199329177672",
+    bugReportChannel: "id",
 
 }
