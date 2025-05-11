@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const arrayMove = require('array-move-item');
 
+// Language data structure
 const languages = {
     vi: {
         race_started: '🏁 Đã bắt đầu cuộc đua! Ấn `join` để tham gia! 🏁\n**➜** Cuộc đua sẽ bắt đầu sau **1 phút** nữa!!!!',
@@ -27,7 +28,8 @@ const languages = {
             shortcut: '🛣️ {player} tìm được lối tắt và tiến nhanh hơn!',
             wind_blow: '🌬️ {player} bị gió thổi bay đi!',
             fog_slow: '🌫️ {player} bị sương mù làm chậm lại!',
-            stormy_drift: '🌪️ {player} bị bão làm trôi xe!'
+            stormy_drift: '🌪️ {player} bị bão làm trôi xe!',
+            powerup_used: '⚡ {player} đã sử dụng vật phẩm {item}!'
         }
     },
     en: {
@@ -55,39 +57,53 @@ const languages = {
             shortcut: '🛣️ {player} found a shortcut and moved faster!',
             wind_blow: '🌬️ {player} was blown away by the wind!',
             fog_slow: '🌫️ {player} was slowed down by the fog!',
-            stormy_drift: '🌪️ {player} was drifted away by the storm!'
+            stormy_drift: '🌪️ {player} was drifted away by the storm!',
+            powerup_used: '⚡ {player} used a power-up: {item}!'
         }
     }
 };
 
+// Game modes and their vehicles
 const gamemodes = {
     car: ['🏎️', '🚗', '🚙', '🚓', '🚑', '🚕', '🚌', '🚎', '🚚', '🚜'],
-    horse: ['🐎', '🏇', '🐴', '🐎', '🏇', '🐴', '🐎', '🏇', '🐴', '🐎'],
-    bike: ['🚲', '🚴', '🚵', '🚲', '🚴', '🚵', '🚲', '🚴', '🚵', '🚲'],
+    horse: ['🐎', '🏇', '🐴'],
+    bike: ['🚲', '🚴', '🚵'],
     plane: ['✈️', '🛫', '🛬', '🛩️', '🚀', '🛸'],
     boat: ['⛵', '🚤', '🛥️', '🛳️', '⛴️', '🚢'],
     custom: ['🚀', '🚁', '🛴', '🚲', '🏍️', '🛵', '🦽', '🦼', '🛶', '🚂', '🛸', '🦯', '🛺', '🚡', '🚝']
 };
 
+// Weather effects on race
 const weatherEffects = {
     sunny: 1,
     rainy: 0.75,
     snowy: 0.5,
-    windy: 0.9, // Gió lớn
-    foggy: 0.8, // Sương mù
-    stormy: 0.6 // Bão
+    windy: 0.9,
+    foggy: 0.8,
+    stormy: 0.6
 };
 
+// Random events during the race
 const randomEvents = [
     { type: 'speed_boost', effect: 2, message: 'speed_boost' },
     { type: 'speed_reduction', effect: 0.5, message: 'speed_reduction' },
     { type: 'distraction', effect: 0, message: 'distraction' },
     { type: 'engine_failure', effect: 0, message: 'engine_failure' },
     { type: 'shortcut', effect: 3, message: 'shortcut' },
-    { type: 'wind_blow', effect: 0.7, message: 'wind_blow' }, // Gió thổi bay
-    { type: 'fog_slow', effect: 0.6, message: 'fog_slow' }, // Sương mù làm chậm
-    { type: 'stormy_drift', effect: 0.4, message: 'stormy_drift' } // Bão làm trôi xe
+    { type: 'wind_blow', effect: 0.7, message: 'wind_blow' },
+    { type: 'fog_slow', effect: 0.6, message: 'fog_slow' },
+    { type: 'stormy_drift', effect: 0.4, message: 'stormy_drift' }
 ];
+
+// Helper function to apply random events
+function applyRandomEvent(raceLine, weather, language, interaction) {
+    const randomEvent = randomEvents[Math.floor(Math.random() * randomEvents.length)];
+    if (Math.random() < 0.2) { // 20% chance for a random event
+        raceLine *= randomEvent.effect;
+        interaction.channel.send(languages[language].events[randomEvent.message].replace('{player}', raceLine.split(' ')[2]));
+    }
+    return raceLine;
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -151,6 +167,7 @@ module.exports = {
             .setDescription(languages[language].race_started);
         await interaction.reply({ embeds: [startEmbed] });
 
+        // Collecting participants
         const filter = m => m.content.toLowerCase().startsWith('join');
         const collector = interaction.channel.createMessageCollector({ filter, time: 60000 });
         const participants = [];
@@ -180,6 +197,7 @@ module.exports = {
                 return interaction.channel.send({ embeds: [notEnoughEmbed] });
             }
 
+            // Display participants
             const playerMentions = participants.map(id => `<@${id}>`).join(', ');
             const playersEmbed = new EmbedBuilder()
                 .setColor('#00FF00')
@@ -192,17 +210,18 @@ module.exports = {
             const interval = setInterval(async () => {
                 raceMsg = move(raceMsg, interval);
                 await raceMessage.edit(raceMsg);
-            
+
                 const raceProgressEmbed = new EmbedBuilder()
                     .setColor('#00FF00')
                     .setTitle('📍 Tiến trình cuộc đua')
                     .setDescription(raceMsg)
                     .addField('Thời tiết', languages[language].weather_options[weather])
                     .setFooter({ text: 'Cuộc đua đang diễn ra!' });
-            
+
                 await interaction.channel.send({ embeds: [raceProgressEmbed] });
             }, 3000);
 
+            // Move players function
             function move(raceMsg, interval) {
                 const raceLines = raceMsg.split('\n');
                 if (!raceLines.every(line => line.includes('🚩'))) {
@@ -212,11 +231,7 @@ module.exports = {
                             movementNumber *= weatherEffects[weather];
 
                             // Apply random events
-                            const randomEvent = randomEvents[Math.floor(Math.random() * randomEvents.length)];
-                            if (Math.random() < 0.2) { // 20% chance for a random event
-                                movementNumber *= randomEvent.effect;
-                                interaction.channel.send(languages[language].events[randomEvent.message].replace('{player}', line.split(' ')[distance + 2]));
-                            }
+                            line = applyRandomEvent(line, movementNumber, weather, language, interaction);
 
                             // Ensure players at the back get a boost
                             if (finishOrder.length > 0 && finishOrder.length < participants.length / 2) {
@@ -267,5 +282,5 @@ module.exports = {
                 }
             }
         });
-    },
+    }
 };
