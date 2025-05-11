@@ -10,10 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/builders": "^1.11.2",
     "array-move-item": "^1.0.0",
     "ascii-table": "^0.0.9",
     "discord-arts": "^0.6.1",
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.19.3",
     "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
     "mongoose": "^6.0.12",
