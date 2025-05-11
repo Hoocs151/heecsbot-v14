@@ -82,7 +82,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For any questions or suggestions, feel free to open an issue or contact me via [GitHub](https://github.com/Hoocs151).
 
-## Acknowledgements 🙏
+## Acknowledgements
 
 This project is based on the [DiscordBotV14-template](https://github.com/Kkkermit/DiscordBotV14-template).
 
