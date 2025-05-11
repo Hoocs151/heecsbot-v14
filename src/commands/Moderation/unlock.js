@@ -9,24 +9,31 @@ module.exports = {
                 .setDescription('The channel you want to unlock')
                 .addChannelTypes(ChannelType.GuildText)
                 .setRequired(true)),
+    
     async execute(interaction) {
         const channel = interaction.options.getChannel('channel');
 
         if (!interaction.member.permissions.has(Flags.ManageChannels)) {
-            return interaction.reply({ content: '❌ You must have the Manage Channels permission to use this command.', ephemeral: true });
+            return interaction.reply({
+                content: '❌ You must have the "Manage Channels" permission to use this command.',
+                ephemeral: true
+            });
         }
 
         const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
         if (!botMember.permissions.has([Flags.ManageChannels, Flags.SendMessages, Flags.EmbedLinks])) {
-            return interaction.reply({ content: '❌ I do not have the necessary permissions to unlock the channel.', ephemeral: true });
+            return interaction.reply({
+                content: '❌ I do not have the necessary permissions (Manage Channels, Send Messages, Embed Links) to unlock the channel.',
+                ephemeral: true
+            });
         }
 
         try {
-            await channel.permissionOverwrites.create(interaction.guild.id, { SendMessages: true });
+            await unlockChannel(channel);
 
             const successEmbed = new EmbedBuilder()
                 .setColor('#2f3136')
-                .setDescription(`✅ The channel ${channel} has been unlocked.`)
+                .setDescription(`✅ The channel **${channel.name}** has been unlocked.`)
                 .setFooter({ text: 'Channel Unlocked' });
 
             return interaction.reply({ embeds: [successEmbed] });
@@ -37,7 +44,22 @@ module.exports = {
                 .setColor('#FF0000')
                 .setDescription(`❌ An error occurred while unlocking the channel: ${err.message}`);
 
-            return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+            return interaction.reply({ embeds: [errorEmbed], flags: 64 }); // Use flags instead of ephemeral
         }
     },
 };
+
+async function unlockChannel(channel) {
+    try {
+        // Accessing permission overwrites correctly
+        const overwrite = channel.permissionOverwrites.cache.get(channel.guild.id);
+
+        if (overwrite && overwrite.allow.has(Flags.SendMessages)) {
+            throw new Error('The channel is already unlocked.');
+        }
+
+        await channel.permissionOverwrites.create(channel.guild.id, { SendMessages: true });
+    } catch (err) {
+        throw new Error(`Failed to update permissions for channel: ${err.message}`);
+    }
+}

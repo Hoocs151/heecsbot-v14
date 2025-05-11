@@ -4,10 +4,11 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('addroleall')
         .setDescription('Adds a role to all users of the server at once.')
-        .addRoleOption(option => 
+        .addRoleOption(option =>
             option.setName('role')
                 .setDescription('The role to add to all members')
-                .setRequired(true)),
+                .setRequired(true)
+        ),
     async execute(interaction, client) {
         const role = interaction.options.getRole('role');
 
@@ -15,11 +16,11 @@ module.exports = {
             const botMember = await interaction.guild.members.fetch(client.user.id);
 
             if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.ManageRoles, Flags.ManageGuild])) {
-                return interaction.reply({ content: '\`❌\` I do not have the necessary permissions to execute this command.', ephemeral: true });
+                return interaction.reply({ content: '`❌` I do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
             if (!interaction.member.permissions.has(Flags.ManageGuild)) {
-                return interaction.reply({ content: '\`❌\` You do not have the necessary permissions to execute this command.', ephemeral: true });
+                return interaction.reply({ content: '`❌` You do not have the necessary permissions to execute this command.', ephemeral: true });
             }
 
             if (botMember.roles.highest.comparePositionTo(role) < 0) {
@@ -45,28 +46,36 @@ module.exports = {
 
             const members = interaction.guild.members.cache;
 
-            for (const member of members.values()) {
-                try {
-                    if (member.roles.cache.has(role.id)) {
-                        skipped++;
-                    } else {
-                        await member.roles.add(role);
-                        count++;
+            const batchSize = 50; // Number of members to process at once (adjust as needed)
+            const memberArray = Array.from(members.values());
+
+            for (let i = 0; i < memberArray.length; i += batchSize) {
+                const batch = memberArray.slice(i, i + batchSize);
+                const promises = batch.map(async (member) => {
+                    try {
+                        if (member.roles.cache.has(role.id)) {
+                            skipped++;
+                        } else {
+                            await member.roles.add(role);
+                            count++;
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        client.logger.error(err);
                     }
+                });
 
-                    const progressEmbed = new EmbedBuilder()
-                        .setColor(client.config.embedSuccess)
-                        .setTitle('Add Role to All Members')
-                        .setDescription(`**Total Members:** ${interaction.guild.memberCount}\n**Processed:** ${count + skipped}\n**Role Added to:** ${count} members\n**Skipped:** ${skipped} members (Already had the role)`)
-                        .setFooter({ text: 'Progressing...', iconURL: client.user.displayAvatarURL({ format: 'png', size: 512, dynamic: true }) })
-                        .setTimestamp();
+                await Promise.all(promises);
 
-                    await interaction.editReply({ embeds: [progressEmbed] });
-                    await wait(3000);
-                } catch (err) {
-                    console.error(err);
-                    client.logger.error(err);
-                }
+                const progressEmbed = new EmbedBuilder()
+                    .setColor(client.config.embedSuccess)
+                    .setTitle('Add Role to All Members')
+                    .setDescription(`**Total Members:** ${interaction.guild.memberCount}\n**Processed:** ${count + skipped}\n**Role Added to:** ${count} members\n**Skipped:** ${skipped} members (Already had the role)`)
+                    .setFooter({ text: 'Progressing...', iconURL: client.user.displayAvatarURL({ format: 'png', size: 512, dynamic: true }) })
+                    .setTimestamp();
+
+                await interaction.editReply({ embeds: [progressEmbed] });
+                await wait(2000); // Short delay between batches to avoid rate limits
             }
 
             const completionEmbed = new EmbedBuilder()

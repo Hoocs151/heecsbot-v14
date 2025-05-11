@@ -9,35 +9,50 @@ module.exports = {
                 .setDescription('The channel you want to lock')
                 .addChannelTypes(ChannelType.GuildText)
                 .setRequired(true)),
+    
     async execute(interaction) {
         const channel = interaction.options.getChannel('channel');
 
+        if (!interaction.guild) {
+            return interaction.reply({ content: '❌ This command can only be run in a server.', flags: 64 }); // Use flags instead of ephemeral
+        }
+
         const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
-        if (!botMember.permissions.has([Flags.ManageChannels, Flags.SendMessages, Flags.EmbedLinks])) {
-            return interaction.reply({ content: '\`❌\` I do not have the necessary permissions to lock channels.', ephemeral: true });
+        const botPermissions = botMember.permissions;
+        const requiredBotPermissions = [Flags.ManageChannels, Flags.SendMessages, Flags.EmbedLinks];
+
+        if (!requiredBotPermissions.every(permission => botPermissions.has(permission))) {
+            return interaction.reply({ 
+                content: '❌ I do not have the necessary permissions to lock channels.', 
+                flags: 64 // Use flags instead of ephemeral
+            });
         }
 
         if (!interaction.member.permissions.has(Flags.ManageChannels)) {
-            return interaction.reply({ content: '\`❌\` You do not have the necessary permissions to lock channels.', ephemeral: true });
+            return interaction.reply({ 
+                content: '❌ You do not have the necessary permissions to lock channels.', 
+                flags: 64 // Use flags instead of ephemeral
+            });
         }
 
         try {
+            // Locking the channel by preventing everyone from sending messages
             await channel.permissionOverwrites.create(interaction.guild.id, { SendMessages: false });
 
             const successEmbed = new EmbedBuilder()
                 .setColor('#2f3136')
-                .setDescription(`\`✅\` Successfully locked the channel ${channel}.`)
+                .setDescription(`✅ Successfully locked the channel ${channel}.`)
                 .setFooter({ text: 'Channel Locked' });
 
-            return interaction.reply({ embeds: [successEmbed] });
+            return interaction.reply({ embeds: [successEmbed], flags: 64 }); // Use flags instead of ephemeral
         } catch (err) {
             console.error(`Error executing lock command: ${err.message}`);
 
             const errorEmbed = new EmbedBuilder()
                 .setColor('#ff0000')
-                .setDescription(`\`❌\` An error occurred while locking the channel: ${err.message}`);
+                .setDescription(`❌ An error occurred while locking the channel: ${err.message}`);
 
-            return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+            return interaction.reply({ embeds: [errorEmbed], flags: 64 }); // Use flags instead of ephemeral
         }
     },
 };

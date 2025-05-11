@@ -17,6 +17,11 @@ const slowmodeDurations = [
     { name: '6 hours', value: 21600 },
 ];
 
+const getSlowmodeName = (value) => {
+    const duration = slowmodeDurations.find(d => d.value === value);
+    return duration ? duration.name : 'Unknown';
+};
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('slowmode')
@@ -28,35 +33,47 @@ module.exports = {
                 .addChoices(
                     slowmodeDurations.map(duration => ({
                         name: duration.name,
-                        value: duration.value.toString()
+                        value: duration.value.toString(),
                     }))
                 )
         ),
+
     async execute(interaction) {
         const duration = parseInt(interaction.options.getString('duration'), 10);
         const channel = interaction.channel;
 
         if (!interaction.member.permissions.has(Flags.ManageChannels)) {
-            return interaction.reply({ content: '\`❌\` You do not have the necessary permissions to execute this command.', ephemeral: true });
+            return interaction.reply({
+                content: '`❌` You do not have the necessary permissions to execute this command.',
+                flags: 64, // Using flags instead of ephemeral
+            });
         }
 
         const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
         if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.ManageChannels])) {
-            return interaction.reply({ content: '\`❌\` I do not have the necessary permissions to execute this command.', ephemeral: true });
+            return interaction.reply({
+                content: '`❌` I do not have the necessary permissions to execute this command.',
+                flags: 64, // Using flags instead of ephemeral
+            });
         }
 
         try {
             await channel.setRateLimitPerUser(duration);
+
             const successEmbed = new EmbedBuilder()
-                .setColor(client.config.embedSuccess)
-                .setDescription(`\`✅\` Slowmode has been ${duration === 0 ? 'disabled' : `set to ${slowmodeDurations.find(d => d.value === duration).name}`}.`);
-            await interaction.reply({ embeds: [successEmbed] });
+                .setColor(interaction.client.config.embedSuccess) // Accessing config through interaction.client
+                .setDescription(`\`✅\` Slowmode has been ${duration === 0 ? 'disabled' : `set to ${getSlowmodeName(duration)}`}.`);
+
+            return interaction.reply({ embeds: [successEmbed], flags: 64 }); // Using flags instead of ephemeral
+
         } catch (err) {
-            console.error(`Command: 'slowmode' has error: ${err.message}.`);
+            console.error(`Error occurred while setting slowmode: ${err.message}`);
+
             const errorEmbed = new EmbedBuilder()
-                .setColor(client.config.embedError)
+                .setColor(interaction.client.config.embedError) // Accessing config through interaction.client
                 .setDescription(`\`❌\` An error occurred while setting slowmode: ${err.message}`);
-            await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+
+            return interaction.reply({ embeds: [errorEmbed], flags: 64 }); // Using flags instead of ephemeral
         }
     },
 };

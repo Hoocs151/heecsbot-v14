@@ -14,35 +14,32 @@ module.exports = {
     async execute(interaction) {
         const amount = interaction.options.getString('amount');
         const user = interaction.options.getUser('user');
+        
+        if (!interaction.member.permissions.has(Flags.ManageMessages)) {
+            return interaction.reply({ content: '❌ You do not have permission to use this command.', ephemeral: true });
+        }
+
+        const parsedAmount = parseInt(amount);
+        if (isNaN(parsedAmount) || parsedAmount < 1 || parsedAmount > 99) {
+            return interaction.reply({ content: '❌ Please provide a valid number between 1 and 99.', ephemeral: true });
+        }
 
         try {
-            if (!interaction.member.permissions.has(Flags.ManageMessages)) {
-                return interaction.reply({ content: '\`❌\` You do not have permission to use this command.', ephemeral: true });
-            }
-
-            if (isNaN(amount) || parseInt(amount) < 1 || parseInt(amount) > 99) {
-                return interaction.reply({ content: '\`❌\` Please provide a valid number between 1 and 99.', ephemeral: true });
-            }
-
             await interaction.deferReply({ ephemeral: true });
 
             let messages;
             if (user) {
-                messages = await interaction.channel.messages.fetch()
-                    .then(messages => messages.filter(m => m.author.id === user.id))
-                    .then(messages => messages.first(parseInt(amount)));
+                messages = await interaction.channel.messages.fetch({ limit: 100 });
+                messages = messages.filter(m => m.author.id === user.id).first(parsedAmount);
             } else {
-                messages = await interaction.channel.messages.fetch({ limit: parseInt(amount) });
+                messages = await interaction.channel.messages.fetch({ limit: parsedAmount });
             }
 
             const deletedMessages = await interaction.channel.bulkDelete(messages, true);
 
-            const deletedSize = deletedMessages.size;
-            const deletedUser = user ? user.username : 'everyone';
-
             const successEmbed = new EmbedBuilder()
                 .setColor('Green')
-                .setDescription(`\`✅\` Successfully deleted ${deletedSize} messages sent by ${deletedUser}.`);
+                .setDescription(`✅ Successfully deleted ${deletedMessages.size} messages${user ? ` sent by ${user.username}` : ''}.`);
 
             return interaction.followUp({ embeds: [successEmbed] });
         } catch (err) {
@@ -50,7 +47,7 @@ module.exports = {
 
             const errorEmbed = new EmbedBuilder()
                 .setColor('Red')
-                .setDescription(`\`❌\` An error occurred while deleting the messages: ${err.message}`);
+                .setDescription(`❌ An error occurred while deleting the messages: ${err.message}`);
 
             return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
         }
