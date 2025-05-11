@@ -202,7 +202,7 @@ module.exports = {
             const playersEmbed = new EmbedBuilder()
                 .setColor('#00FF00')
                 .setDescription(languages[language].participants.replace('{participants}', playerMentions));
-            await interaction.channel.send({ embeds: [playersEmbed], ephemeral: true });
+            await interaction.channel.send({ embeds: [playersEmbed], flags: 64 });
 
             let raceMsg = participants.map(player => `🏁 ${'≡ '.repeat(distance)}${userEmos[`<@${player}>`]} <@${player}>`).join('\n');
             const raceMessage = await interaction.channel.send(raceMsg);

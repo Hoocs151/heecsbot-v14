@@ -27,7 +27,7 @@ module.exports = {
             options.setName("reason").setDescription("Reason to blacklist user")
         ),
     async execute(interaction, client) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: 64 });
         const { options } = interaction;
         const choices = options.getString("options");
         const ID = options.getString("id");

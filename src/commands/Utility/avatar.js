@@ -99,7 +99,7 @@ module.exports = {
 
                     await i.editReply({ embeds: [embed], components: [sizeMenu, formatMenu, changeMenu, button] });
                 } else {
-                    await i.followUp({ content: `Only ${interaction.user.toString()} can use these select menus/buttons.`, ephemeral: true });
+                    await i.followUp({ content: `Only ${interaction.user.toString()} can use these select menus/buttons.`, flags: 64 });
                 }
             })
             .on("end", async () => {

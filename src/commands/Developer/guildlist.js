@@ -82,9 +82,9 @@ module.exports = {
             console.error("Detailed error:", error);
 
             if (interaction.deferred || interaction.replied) {
-                await interaction.followUp({ embeds: [errorMessage], ephemeral: true });
+                await interaction.followUp({ embeds: [errorMessage], flags: 64 });
             } else {
-                await interaction.reply({ embeds: [errorMessage], ephemeral: true });
+                await interaction.reply({ embeds: [errorMessage], flags: 64 });
             }
         }
     },

@@ -38,20 +38,20 @@ module.exports = {
         try {
             const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
             if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.MuteMembers, Flags.ManageRoles, Flags.ManageChannels])) {
-                return interaction.reply({ content: '❌ I do not have the necessary permissions to execute this command.', ephemeral: true });
+                return interaction.reply({ content: '❌ I do not have the necessary permissions to execute this command.', flags: 64 });
             }
 
             if (!interaction.member.permissions.has([Flags.MuteMembers, Flags.ManageRoles])) {
-                return interaction.reply({ content: '❌ You do not have the necessary permissions to execute this command.', ephemeral: true });
+                return interaction.reply({ content: '❌ You do not have the necessary permissions to execute this command.', flags: 64 });
             }
 
             if (member.id === interaction.user.id) {
-                return interaction.reply({ content: '❌ You cannot mute yourself.', ephemeral: true });
+                return interaction.reply({ content: '❌ You cannot mute yourself.', flags: 64 });
             }
 
             const { error, success: time } = getTotalTime(timeString ?? '1d');
             if (error) {
-                return interaction.reply({ content: `❌ Invalid time format: ${error}`, ephemeral: true });
+                return interaction.reply({ content: `❌ Invalid time format: ${error}`, flags: 64 });
             }
 
             await member.timeout(time, `${interaction.user.id} put user in timeout`);
@@ -68,7 +68,7 @@ module.exports = {
                 .setColor('#FF0000')
                 .setDescription(`❌ An error occurred while muting the user: ${err.message}`);
 
-            return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+            return interaction.reply({ embeds: [errorEmbed], flags: 64 });
         }
     },
 };

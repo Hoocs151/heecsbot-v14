@@ -17,19 +17,19 @@ module.exports = {
             if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.MuteMembers, Flags.ManageRoles])) {
                 return interaction.reply({ 
                     content: '❌ I lack the necessary permissions to execute this command.', 
-                    ephemeral: true 
+                    flags: 64
                 });
             }
 
             if (!interaction.member.permissions.has([Flags.MuteMembers, Flags.ManageRoles])) {
                 return interaction.reply({ 
                     content: '❌ You do not have the necessary permissions to unmute users.', 
-                    ephemeral: true 
+                    flags: 64
                 });
             }
 
             if (member.id === interaction.user.id) {
-                return interaction.reply({ content: '❌ You cannot unmute yourself.', ephemeral: true });
+                return interaction.reply({ content: '❌ You cannot unmute yourself.', flags: 64 });
             }
 
             await member.timeout(null, `✅ ${interaction.user.tag} removed user from timeout`);
@@ -46,7 +46,7 @@ module.exports = {
                 .setColor('#FF0000')
                 .setDescription(`❌ An error occurred while unmuting the user: ${err.message}`);
 
-            return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+            return interaction.reply({ embeds: [errorEmbed], flags: 64 });
         }
     },
 };

@@ -104,7 +104,7 @@ module.exports = {
             embeds: [mainEmbed],
             components: [row],
             fetchReply: true,
-            ephemeral: true,
+            flags: 64,
         });
 
         // Collector for category selection
@@ -117,7 +117,7 @@ module.exports = {
             const selectedCategory = i.values[0];
 
             if (selectedCategory === 'main') {
-                await i.update({ embeds: [mainEmbed], components: [row], ephemeral: true });
+                await i.update({ embeds: [mainEmbed], components: [row], flags: 64 });
                 return;
             }
 
@@ -134,14 +134,14 @@ module.exports = {
                 });
             });
 
-            await i.update({ embeds: [embed], components: [row], ephemeral: true });
+            await i.update({ embeds: [embed], components: [row], flags: 64 });
         });
 
         collector.on('end', async collected => {
             if (!collected.size) {
-                await interaction.editReply({ content: 'No category selected within the time limit.', components: [], ephemeral: true });
+                await interaction.editReply({ content: 'No category selected within the time limit.', components: [], flags: 64 });
             } else {
-                await interaction.editReply({ components: [], ephemeral: true });
+                await interaction.editReply({ components: [], flags: 64 });
             }
         });
     },

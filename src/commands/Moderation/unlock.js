@@ -16,7 +16,7 @@ module.exports = {
         if (!interaction.member.permissions.has(Flags.ManageChannels)) {
             return interaction.reply({
                 content: '❌ You must have the "Manage Channels" permission to use this command.',
-                ephemeral: true
+                flags: 64
             });
         }
 
@@ -24,7 +24,7 @@ module.exports = {
         if (!botMember.permissions.has([Flags.ManageChannels, Flags.SendMessages, Flags.EmbedLinks])) {
             return interaction.reply({
                 content: '❌ I do not have the necessary permissions (Manage Channels, Send Messages, Embed Links) to unlock the channel.',
-                ephemeral: true
+                flags: 64
             });
         }
 
@@ -44,14 +44,13 @@ module.exports = {
                 .setColor('#FF0000')
                 .setDescription(`❌ An error occurred while unlocking the channel: ${err.message}`);
 
-            return interaction.reply({ embeds: [errorEmbed], flags: 64 }); // Use flags instead of ephemeral
+            return interaction.reply({ embeds: [errorEmbed], flags: 64 });
         }
     },
 };
 
 async function unlockChannel(channel) {
     try {
-        // Accessing permission overwrites correctly
         const overwrite = channel.permissionOverwrites.cache.get(channel.guild.id);
 
         if (overwrite && overwrite.allow.has(Flags.SendMessages)) {

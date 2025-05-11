@@ -40,7 +40,7 @@ module.exports = {
                     .setStyle(ButtonStyle.Danger)
             );
 
-            await interaction.reply({ embeds: [confirmationEmbed], components: [row], ephemeral: true });
+            await interaction.reply({ embeds: [confirmationEmbed], components: [row], flags: 64 });
 
             const filter = i => ['confirm', 'cancel'].includes(i.customId) && i.user.id === user.id;
             const collector = interaction.channel.createMessageComponentCollector({ filter, time: 15000 });
@@ -59,9 +59,9 @@ module.exports = {
                         console.log(`[Reload] ${user.tag} (ID: ${user.id}) has reloaded the events.`);
                     }
 
-                    await i.update({ embeds: [embed], components: [], ephemeral: true });
+                    await i.update({ embeds: [embed], components: [], flags: 64 });
                 } else if (i.customId === 'cancel') {
-                    await i.update({ content: 'Reload action cancelled.', embeds: [], components: [], ephemeral: true });
+                    await i.update({ content: 'Reload action cancelled.', embeds: [], components: [], flags: 64 });
                     console.log(`[Reload] ${user.tag} (ID: ${user.id}) cancelled the reload action.`);
                 }
                 collector.stop();
@@ -69,7 +69,7 @@ module.exports = {
 
             collector.on('end', collected => {
                 if (collected.size === 0) {
-                    interaction.editReply({ content: 'Reload action timed out.', embeds: [], components: [], ephemeral: true });
+                    interaction.editReply({ content: 'Reload action timed out.', embeds: [], components: [], flags: 64 });
                 }
             });
 
@@ -77,7 +77,7 @@ module.exports = {
             embed.setTitle('`⚠️` Error')
                 .setDescription(`An error occurred while reloading: ${error.message}`)
                 .setColor(client.config.embedERROR || '#FF0000');
-            await interaction.reply({ embeds: [embed], ephemeral: true });
+            await interaction.reply({ embeds: [embed], flags: 64 });
             console.error(`[Reload] Error occurred: ${error.message}`);
         }
     }

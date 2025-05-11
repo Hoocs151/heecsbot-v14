@@ -33,14 +33,14 @@ module.exports = {
                     .setDescription(`\`✅\` I have set you AFK${reasonInput ? ` with the reason: **${reasonInput}**` : ''}`)
                     .setTimestamp();
 
-                return interaction.reply({ embeds: [replyMessage], ephemeral: true });
+                return interaction.reply({ embeds: [replyMessage], flags: 64 });
             } else {
                 const alreadyAfkMessage = new EmbedBuilder()
                     .setColor(client.config.embedError)
                     .setDescription(`\`❌\` You already set yourself AFK. To stop this from happening, send a message in any channel!`)
                     .setTimestamp();
 
-                return interaction.reply({ embeds: [alreadyAfkMessage], ephemeral: true });
+                return interaction.reply({ embeds: [alreadyAfkMessage], flags: 64 });
             }
         } catch (error) {
             console.error(`Error executing AFK command: ${error.message}`);
@@ -50,7 +50,7 @@ module.exports = {
                 .setDescription(`\`❌\` An error occurred while setting you AFK. Please try again later.`)
                 .setTimestamp();
 
-            return interaction.reply({ embeds: [errorMessage], ephemeral: true });
+            return interaction.reply({ embeds: [errorMessage], flags: 64 });
         }
     }
 };

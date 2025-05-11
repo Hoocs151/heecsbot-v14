@@ -15,15 +15,15 @@ module.exports = {
         const botMember = await interaction.guild.members.fetch(client.user.id);
         
         if (!botMember.permissions.has([Flags.SendMessages, Flags.EmbedLinks, Flags.ManageRoles, Flags.ManageGuild])) {
-            return interaction.reply({ content: '`❌` I do not have the necessary permissions to execute this command.', ephemeral: true });
+            return interaction.reply({ content: '`❌` I do not have the necessary permissions to execute this command.', flags: 64 });
         }
 
         if (!interaction.member.permissions.has(Flags.ManageGuild)) {
-            return interaction.reply({ content: '`❌` You do not have the necessary permissions to execute this command.', ephemeral: true });
+            return interaction.reply({ content: '`❌` You do not have the necessary permissions to execute this command.', flags: 64 });
         }
 
         if (botMember.roles.highest.comparePositionTo(role) < 0) {
-            return interaction.reply({ content: `\`❌\` I cannot manage the ${role.name} role due to role hierarchy.`, ephemeral: true });
+            return interaction.reply({ content: `\`❌\` I cannot manage the ${role.name} role due to role hierarchy.`, flags: 64 });
         }
 
         const initialEmbed = new EmbedBuilder()
@@ -60,7 +60,7 @@ module.exports = {
                     await interaction.editReply({ embeds: [progressEmbed] });
                 }
 
-                await wait(300);  // Small delay to prevent rate-limiting
+                await wait(300);
             } catch (err) {
                 console.error(err);
                 client.logger.error(err);

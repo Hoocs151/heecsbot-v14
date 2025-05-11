@@ -36,16 +36,16 @@ module.exports = {
         const user = interaction.options.getUser('user');
 
         if (type === 'channel' && !channel) {
-            return interaction.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` You must specify a channel when type is set to Channel.')], ephemeral: true });
+            return interaction.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` You must specify a channel when type is set to Channel.')], flags: 64 });
         }
         if (type === 'dm' && !user) {
-            return interaction.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` You must specify a user when type is set to Direct Message.')], ephemeral: true });
+            return interaction.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` You must specify a user when type is set to Direct Message.')], flags: 64 });
         }
         if (type === 'channel' && user) {
-            return interaction.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` You cannot specify a user when type is set to Channel.')], ephemeral: true });
+            return interaction.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` You cannot specify a user when type is set to Channel.')], flags: 64 });
         }
         if (type === 'dm' && channel) {
-            return interaction.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` You cannot specify a channel when type is set to Direct Message.')], ephemeral: true });
+            return interaction.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` You cannot specify a channel when type is set to Direct Message.')], flags: 64 });
         }
 
         const sendModal = new ModalBuilder()
@@ -97,13 +97,13 @@ module.exports = {
             let embedColor = response.fields.getTextInputValue('embed_color') || client.config.embedSuccess || '#4052d6';
 
             if (embedMode && !['on', 'off'].includes(embedMode)) {
-                return response.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` Invalid embed mode. Please enter "on" or "off".')], ephemeral: true });
+                return response.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` Invalid embed mode. Please enter "on" or "off".')], flags: 64 });
             }
 
             const colorPattern = /^#[0-9A-F]{6}$/i;
             if (!colorPattern.test(embedColor)) {
                 embedColor = client.config.embedSuccess || '#4052d6'; // Fallback to default color if invalid
-                await response.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` Invalid color format. Using default color.')], ephemeral: true });
+                await response.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` Invalid color format. Using default color.')], flags: 64 });
             }
 
             const embed = new EmbedBuilder()
@@ -130,10 +130,10 @@ module.exports = {
                 }
             }
 
-            await response.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedSuccess).setDescription('\`✅\` Your message has been successfully sent.')], ephemeral: true });
+            await response.reply({ embeds: [new EmbedBuilder().setColor(client.config.embedSuccess).setDescription('\`✅\` Your message has been successfully sent.')], flags: 64 });
         } catch (error) {
             console.error(error);
-            await interaction.followUp({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` An error occurred while sending the message.')], ephemeral: true });
+            await interaction.followUp({ embeds: [new EmbedBuilder().setColor(client.config.embedERROR).setDescription('\`❌\` An error occurred while sending the message.')], flags: 64 });
         }
     }
 };

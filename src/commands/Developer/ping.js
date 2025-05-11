@@ -11,7 +11,7 @@ module.exports = {
         const sent = await interaction.reply({ 
             content: "Calculating ping...", 
             fetchReply: true,
-            ephemeral: true 
+            flags: 64 
         });
 
         const pingEmbed = new EmbedBuilder()
