@@ -50,19 +50,19 @@ module.exports = {
             const nicknames = nicknameData?.nicknames?.join(' - ') || 'No Nicknames Tracked';
             const imageAttachment = new AttachmentBuilder(profileBuffer, { name: 'profile.png' });
 
+            // Create the buttons correctly
             const avatarButton = new ButtonBuilder()
                 .setLabel('Avatar')
                 .setStyle(5)
                 .setURL(member.user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }));
 
-            const bannerURL = (await member.user.fetch()).bannerURL() || 'https://example.com/default-banner.jpg';
             const bannerButton = new ButtonBuilder()
                 .setLabel('Banner')
                 .setStyle(5)
-                .setURL(bannerURL);
+                .setURL((await member.user.fetch()).bannerURL() || 'https://example.com/default-banner.jpg');
 
-            const row = new ActionRowBuilder()
-                .addComponents(avatarButton, bannerButton);
+            // Add buttons to an action row
+            const row = new ActionRowBuilder().addComponents(avatarButton, bannerButton);
 
             const embed = new EmbedBuilder()
                 .setColor('#00FF00')
@@ -81,14 +81,15 @@ module.exports = {
                     { name: 'Account Created', value: `<t:${Math.floor(member.user.createdAt / 1000)}:f> (${Math.round((new Date() - member.user.createdAt) / 86400000)} days ago)`, inline: false },
                     { name: 'Joined Server', value: `<t:${Math.floor(member.joinedAt / 1000)}:f> (${Math.round((new Date() - member.joinedAt) / 86400000)} days ago)`, inline: false },
                     { name: 'Join Position', value: `${member.displayName} was the ${addSuffix(joinPosition)} person to join this server.`, inline: false },
-                    { name: 'Mutual Servers', value: `${interaction.client.guilds.cache.filter(a => a.members.cache.get(member.user.id)).map(a => a.name).join(', ') || 'None'}`, inline: true },
-                    { name: `Roles [${member.roles.cache.size}]`, value: `${member.roles.cache.map(role => role).join(', ')}`, inline: false },
+                    { name: 'Mutual Servers', value: getMutualServers(interaction.client, member), inline: true },
+                    { name: `Roles [${member.roles.cache.size}]`, value: getRoles(member), inline: false },
                     { name: `Permissions [${member.permissions.toArray().length}]`, value: member.permissions.toArray().map(perm => perm.toLowerCase().replace(/_/g, ' ')).join(' » '), inline: false }
                 )
                 .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: `${interaction.user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 })}` })
                 .setTimestamp(new Date());
 
-            interaction.editReply({ embeds: [embed], components: [row], files: [imageAttachment] });
+            // Send the reply
+            await interaction.editReply({ embeds: [embed], components: [row], files: [imageAttachment] });
 
         } catch (error) {
             interaction.editReply({ content: `\`❌\` There was an error generating the info for **${member}**` });
@@ -96,6 +97,15 @@ module.exports = {
         }
     }
 };
+
+function getRoles(member) {
+    return member.roles.cache.size > 0 ? member.roles.cache.map(role => role.name).join(', ') : 'No roles assigned';
+}
+
+function getMutualServers(client, member) {
+    const mutualServers = client.guilds.cache.filter(a => a.members.cache.has(member.id)).map(a => a.name).join(', ');
+    return mutualServers || 'None';
+}
 
 async function getJoinPosition(guild, member) {
     const members = await guild.members.fetch();
