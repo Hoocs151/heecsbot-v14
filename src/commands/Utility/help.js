@@ -100,12 +100,14 @@ module.exports = {
                 iconURL: interaction.user.displayAvatarURL()
             });
 
-        const response = await interaction.reply({
+        await interaction.reply({
             embeds: [mainEmbed],
             components: [row],
-            fetchReply: true,
             flags: 64,
         });
+        
+        const response = await interaction.fetchReply();
+        
 
         // Collector for category selection
         const collector = response.createMessageComponentCollector({
