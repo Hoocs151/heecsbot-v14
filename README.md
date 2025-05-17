@@ -1,4 +1,6 @@
-## 🌐 Choose your language / Chọn ngôn ngữ
+<p align="center">
+  <strong><h2>🌐 Choose your language / Chọn ngôn ngữ</h2></strong>
+</p>
 
 <p align="center">  
 👉 Please select your preferred language below to view the documentation:  
@@ -22,5 +24,3 @@
     </td>
   </tr>
 </table>
-
----
