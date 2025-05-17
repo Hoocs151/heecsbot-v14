@@ -2,15 +2,17 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const fetch = require("node-fetch"); // nhớ npm i node-fetch@2 nếu chưa cài
 
 const animals = [
-  "cat",
-  "dog",
-  "panda",
   "fox",
+  "cat",
+  "birb",
+  "panda",
   "red_panda",
+  "racoon",
   "koala",
-  "bird",
-  "raccoon",
   "kangaroo",
+  "whale",
+  "dog",
+  "bird"
 ];
 
 const BASE_URL = "https://some-random-api.com/animal";
