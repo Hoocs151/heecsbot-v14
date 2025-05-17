@@ -1,75 +1,71 @@
 const { inspect } = require('node:util');
 
 const color = {
-    red: '\x1b[31m',
-    orange: '\x1b[38;5;202m',
-    yellow: '\x1b[33m',
-    green: '\x1b[32m',
-    blue: '\x1b[34m',
-    pink: '\x1b[38;5;213m',
-    torquise: '\x1b[38;5;45m',
-    purple: '\x1b[38;5;57m',
-    reset: '\x1b[0m'
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+
+  red: '\x1b[31m',
+  orange: '\x1b[38;5;202m',
+  yellow: '\x1b[33m',
+  green: '\x1b[32m',
+  blue: '\x1b[34m',
+  pink: '\x1b[38;5;213m',
+  torquise: '\x1b[38;5;45m',
+  purple: '\x1b[38;5;57m',
+};
+
+function pad(n) {
+  return n < 10 ? '0' + n : n;
 }
 
 function getTimestamp() {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 
-function write(message = '', prefix = '', colors = true) {
-    const properties = inspect(message, { depth: 3, colors: Boolean(colors && typeof message !== 'string') });
+function write(message = '', levelColor = color.yellow, levelName = 'INFO', useColors = true, useErrorConsole = false) {
+  let msgStr;
+  if (typeof message === 'string') {
+    msgStr = message;
+  } else {
+    msgStr = inspect(message, { depth: 3, colors: useColors });
+  }
+  const lines = msgStr.split('\n');
+  const prefix = `${levelColor}${color.bold}[${levelName}]${color.reset} ${color.yellow}[${getTimestamp()}]${color.reset} - `;
+  const out = useErrorConsole ? console.error : console.log;
 
-    const regex = /^\s*["'`](.*)["'`]\s*\+?$/gm;
-
-    const lines = properties.split('\n');
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].replace(regex, '$1');
-        if (i === 0) {
-            console.log(prefix + line);
-        } else {
-            console.log(line);
-        }
+  lines.forEach((line, i) => {
+    if (i === 0) {
+      out(prefix + line);
+    } else {
+      out('  ' + line);
     }
+  });
 }
 
-function info(message) {
-    return write(message, `${color.yellow}[${getTimestamp()}]${color.reset} `);
+function info(msg) {
+  write(msg, color.yellow, 'INFO');
 }
-
-function warn(message) {
-    return write(message, `${color.orange}[${getTimestamp()}]${color.reset} `);
+function warn(msg) {
+  write(msg, color.orange, 'WARN');
 }
-
-function error(message) {
-    return write(message, `${color.red}[${getTimestamp()}] `, false);
+function error(msg) {
+  write(msg, color.red, 'ERROR', false, true);
 }
-
-function success(message) {
-    return write(message, `${color.green}[${getTimestamp()}]${color.reset} `);
+function success(msg) {
+  write(msg, color.green, 'SUCCESS');
 }
-
-function debug(message) {
-    return write(message, `${color.blue}[${getTimestamp()}]${color.reset} `);
+function debug(msg) {
+  write(msg, color.blue, 'DEBUG');
 }
-
-function logging(message) {
-    return write(message, `${color.pink}[${getTimestamp()}]${color.reset} `);
+function logging(msg) {
+  write(msg, color.pink, 'LOG');
 }
-
-function torquise(message) {
-    return write(message, `${color.torquise}[${getTimestamp()}]${color.reset} `);
+function torquise(msg) {
+  write(msg, color.torquise, 'TORQUISE');
 }
-
-function purple(message) {
-    return write(message, `${color.purple}[${getTimestamp()}]${color.reset} `);
-
+function purple(msg) {
+  write(msg, color.purple, 'PURPLE');
 }
 
 module.exports = { getTimestamp, write, info, warn, error, success, debug, logging, torquise, purple, color };

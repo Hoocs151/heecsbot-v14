@@ -9,16 +9,13 @@ module.exports = {
         )
             return;
 
-        // Handle AFK functionality
         try {
-            // Check if the message author is AFK
             let afkData = await AFKSchema.findOne({
                 guild: message.guild.id,
                 user: message.author.id
             });
 
             if (afkData) {
-                // Remove AFK status
                 await AFKSchema.deleteOne({
                     guild: message.guild.id,
                     user: message.author.id
@@ -32,7 +29,6 @@ module.exports = {
                 message.reply({ embeds: [welcomeBackMessage], ephemeral: true });
             }
 
-            // Check if any mentioned users are AFK
             for (const user of message.mentions.users.values()) {
                 const mentionedAFK = await AFKSchema.findOne({
                     guild: message.guild.id,
