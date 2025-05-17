@@ -1,7 +1,3 @@
-# heecsbot-v14
-
----
-
 ## 🌐 Choose your language / Chọn ngôn ngữ
 
 👉 Please select your preferred language below to view the documentation:
