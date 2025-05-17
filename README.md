@@ -1,8 +1,3 @@
-Dạ, để tôi biến bản README của bạn thành pro hơn, vừa dễ đọc, vừa chỉn chu mà vẫn giữ được sự thân thiện, trực tiếp đúng chuẩn dev hiện đại nhé. Câu cú gọn gàng, cấu trúc rõ ràng, highlight đúng điểm cần chú ý.
-
----
-
-````markdown
 # heecsbot-v14 🚀✨
 
 ![Discord.js v14](https://img.shields.io/badge/Discord.js-v14-blue)
@@ -214,5 +209,3 @@ Lấy cảm hứng từ [DiscordBotV14-template](https://github.com/Kkkermit/Dis
 ![GitHub stars](https://img.shields.io/github/stars/Hoocs151/heecsbot-v14?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/Hoocs151/heecsbot-v14?style=social)
 ![GitHub issues](https://img.shields.io/github/issues/Hoocs151/heecsbot-v14)
-
-```
