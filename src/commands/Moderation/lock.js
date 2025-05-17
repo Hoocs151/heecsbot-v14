@@ -14,7 +14,7 @@ module.exports = {
         const channel = interaction.options.getChannel('channel');
 
         if (!interaction.guild) {
-            return interaction.reply({ content: '❌ This command can only be run in a server.', flags: 64 });
+            return interaction.reply({ content: '\`❌\` This command can only be run in a server.', flags: 64 });
         }
 
         const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
@@ -23,14 +23,14 @@ module.exports = {
 
         if (!requiredBotPermissions.every(permission => botPermissions.has(permission))) {
             return interaction.reply({ 
-                content: '❌ I do not have the necessary permissions to lock channels.', 
+                content: '\`❌\` I do not have the necessary permissions to lock channels.', 
                 flags: 64
             });
         }
 
         if (!interaction.member.permissions.has(Flags.ManageChannels)) {
             return interaction.reply({ 
-                content: '❌ You do not have the necessary permissions to lock channels.', 
+                content: '\`❌\` You do not have the necessary permissions to lock channels.', 
                 flags: 64
             });
         }
@@ -39,8 +39,8 @@ module.exports = {
             await channel.permissionOverwrites.create(interaction.guild.id, { SendMessages: false });
 
             const successEmbed = new EmbedBuilder()
-                .setColor('#2f3136')
-                .setDescription(`✅ Successfully locked the channel ${channel}.`)
+                .setColor(client.config.embedSuccess)
+                .setDescription(`\`✅\` Successfully locked the channel ${channel}.`)
                 .setFooter({ text: 'Channel Locked' });
 
             return interaction.reply({ embeds: [successEmbed], flags: 64 });
@@ -48,8 +48,8 @@ module.exports = {
             console.error(`Error executing lock command: ${err.message}`);
 
             const errorEmbed = new EmbedBuilder()
-                .setColor('#ff0000')
-                .setDescription(`❌ An error occurred while locking the channel: ${err.message}`);
+                .setColor(client.config.embedError)
+                .setDescription(`\`❌\` An error occurred while locking the channel: ${err.message}`);
 
             return interaction.reply({ embeds: [errorEmbed], flags: 64 });
         }

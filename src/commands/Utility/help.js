@@ -8,11 +8,10 @@ module.exports = {
         .setDescription('Displays a list of available commands.'),
 
     async execute(interaction, client) {
-        const commands = new Map();  // Dùng Map để lưu trữ các lệnh theo category
+        const commands = new Map();
         const commandsPath = path.join(__dirname, '..');
         const cache = new Map();
 
-        // Đọc các lệnh từ thư mục
         async function readCommands(dir) {
             if (cache.has(dir)) return cache.get(dir);
 
@@ -42,7 +41,6 @@ module.exports = {
 
         const allCommands = await readCommands(commandsPath);
 
-        // Phân loại lệnh theo category
         const commandCategories = allCommands.reduce((acc, command) => {
             if (!acc[command.category]) {
                 acc[command.category] = [];
@@ -51,7 +49,6 @@ module.exports = {
             return acc;
         }, {});
 
-        // Các emoji cho từng category
         const categoryIcons = {
             'Developer': '👨‍💻',
             'Fun': '🎉',
@@ -60,7 +57,6 @@ module.exports = {
             'Utility': '🔧',
         };
 
-        // Kiểm tra quyền Bot Owner
         const isBotOwner = client.config.developers.includes(interaction.user.id);
         const categoryOptions = [{ label: 'Main page', value: 'main', emoji: '🏠' }]
             .concat(Object.keys(commandCategories).filter(category => isBotOwner || category !== 'Developer')
@@ -71,7 +67,6 @@ module.exports = {
                 }))
             );
 
-        // Tạo menu chọn category
         const selectMenu = new StringSelectMenuBuilder()
             .setCustomId('select-category')
             .setPlaceholder('Select a category')
@@ -109,7 +104,6 @@ module.exports = {
         const response = await interaction.fetchReply();
         
 
-        // Collector for category selection
         const collector = response.createMessageComponentCollector({
             componentType: ComponentType.StringSelect,
             time: 60000,

@@ -16,12 +16,12 @@ module.exports = {
         const user = interaction.options.getUser('user');
         
         if (!interaction.member.permissions.has(Flags.ManageMessages)) {
-            return interaction.reply({ content: '❌ You do not have permission to use this command.', flags: 64 });
+            return interaction.reply({ content: '\`❌\` You do not have permission to use this command.', flags: 64 });
         }
 
         const parsedAmount = parseInt(amount);
         if (isNaN(parsedAmount) || parsedAmount < 1 || parsedAmount > 99) {
-            return interaction.reply({ content: '❌ Please provide a valid number between 1 and 99.', flags: 64 });
+            return interaction.reply({ content: '\`❌\` Please provide a valid number between 1 and 99.', flags: 64 });
         }
 
         try {
@@ -38,16 +38,16 @@ module.exports = {
             const deletedMessages = await interaction.channel.bulkDelete(messages, true);
 
             const successEmbed = new EmbedBuilder()
-                .setColor('Green')
-                .setDescription(`✅ Successfully deleted ${deletedMessages.size} messages${user ? ` sent by ${user.username}` : ''}.`);
+                .setColor(client.config.embedSuccess)
+                .setDescription(`\`✅\` Successfully deleted ${deletedMessages.size} messages${user ? ` sent by ${user.username}` : ''}.`);
 
             return interaction.followUp({ embeds: [successEmbed] });
         } catch (err) {
             console.error(`Error executing purge command: ${err.message}`);
 
             const errorEmbed = new EmbedBuilder()
-                .setColor('Red')
-                .setDescription(`❌ An error occurred while deleting the messages: ${err.message}`);
+                .setColor(client.config.embedError)
+                .setDescription(`\`❌\` An error occurred while deleting the messages: ${err.message}`);
 
             return interaction.reply({ embeds: [errorEmbed], flags: 64 });
         }

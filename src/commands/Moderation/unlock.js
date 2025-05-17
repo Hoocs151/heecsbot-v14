@@ -15,7 +15,7 @@ module.exports = {
 
         if (!interaction.member.permissions.has(Flags.ManageChannels)) {
             return interaction.reply({
-                content: '❌ You must have the "Manage Channels" permission to use this command.',
+                content: '\`❌\` You must have the "Manage Channels" permission to use this command.',
                 flags: 64
             });
         }
@@ -23,7 +23,7 @@ module.exports = {
         const botMember = await interaction.guild.members.fetch(interaction.client.user.id);
         if (!botMember.permissions.has([Flags.ManageChannels, Flags.SendMessages, Flags.EmbedLinks])) {
             return interaction.reply({
-                content: '❌ I do not have the necessary permissions (Manage Channels, Send Messages, Embed Links) to unlock the channel.',
+                content: '\`❌\` I do not have the necessary permissions (Manage Channels, Send Messages, Embed Links) to unlock the channel.',
                 flags: 64
             });
         }
@@ -32,8 +32,8 @@ module.exports = {
             await unlockChannel(channel);
 
             const successEmbed = new EmbedBuilder()
-                .setColor('#2f3136')
-                .setDescription(`✅ The channel **${channel.name}** has been unlocked.`)
+                .setColor(client.config.embedSuccess)
+                .setDescription(`\`✅\` The channel **${channel.name}** has been unlocked.`)
                 .setFooter({ text: 'Channel Unlocked' });
 
             return interaction.reply({ embeds: [successEmbed] });
@@ -41,8 +41,8 @@ module.exports = {
             console.error(`Error unlocking channel: ${err.message}`);
 
             const errorEmbed = new EmbedBuilder()
-                .setColor('#FF0000')
-                .setDescription(`❌ An error occurred while unlocking the channel: ${err.message}`);
+                .setColor(client.config.embedError)
+                .setDescription(`\`❌\` An error occurred while unlocking the channel: ${err.message}`);
 
             return interaction.reply({ embeds: [errorEmbed], flags: 64 });
         }

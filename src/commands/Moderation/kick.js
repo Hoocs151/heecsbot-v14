@@ -17,7 +17,7 @@ module.exports = {
   
   sendEmbed: async (interaction, color, description, footerText, success = false) => {
     const embed = new EmbedBuilder()
-      .setColor(color || '#FF0000')  // Default to red if color is undefined
+      .setColor(color || '#FF0000')
       .setDescription(description || 'No description provided')
       .setFooter({ text: footerText || 'No footer text' })
       .setTimestamp();
@@ -70,7 +70,7 @@ module.exports = {
     try {
       await targetUser.kick(reason);
       const embed = new EmbedBuilder()
-        .setColor(client.config.embedSuccess || '#00FF00') // Ensure default color if config is missing
+        .setColor(client.config.embedSuccess || '#00FF00')
         .setDescription(`\`✅\` User ${targetUser} was kicked.`)
         .addFields(
           { name: 'User', value: `${targetUser}`, inline: false },
