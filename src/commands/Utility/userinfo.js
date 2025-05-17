@@ -32,80 +32,103 @@ module.exports = {
                 .setDescription('The user you want to get information of')
                 .setRequired(false)
         ),
+
     async execute(interaction) {
         await interaction.deferReply();
-        const memberOption = interaction.options.getMember('user');
-        const member = memberOption || interaction.member;
+
+        const member = interaction.options.getMember('user') || interaction.member;
 
         try {
-            const [userFlags, usernameData, nicknameData, joinPosition, profileBuffer] = await Promise.all([
-                member.user.fetchFlags().then(flags => flags.toArray()),
+            const fetchedUser = await member.user.fetch();
+
+            const [usernameData, nicknameData, joinPosition, profileBuffer] = await Promise.all([
                 Usernames.findOne({ discordId: member.id }).lean(),
                 Nickname.findOne({ discordId: member.id, guildId: interaction.guild.id }).lean(),
                 getJoinPosition(interaction.guild, member),
-                profileImage(member.id)
+                profileImage(member.id),
             ]);
 
-            const usernames = usernameData?.usernames?.join(' - ') || 'No Tags Tracked';
-            const nicknames = nicknameData?.nicknames?.join(' - ') || 'No Nicknames Tracked';
-            const imageAttachment = new AttachmentBuilder(profileBuffer, { name: 'profile.png' });
+            const userFlags = fetchedUser.flags?.toArray() || [];
 
-            // Create the buttons correctly
+            const usernames = usernameData?.usernames?.length
+                ? usernameData.usernames.join(' - ')
+                : 'No Tags Tracked';
+
+            const nicknames = nicknameData?.nicknames?.length
+                ? nicknameData.nicknames.join(' - ')
+                : 'No Nicknames Tracked';
+
+            const imageAttachment = profileBuffer
+                ? new AttachmentBuilder(profileBuffer, { name: 'profile.png' })
+                : null;
+
+            const avatarURL = member.user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 });
             const avatarButton = new ButtonBuilder()
                 .setLabel('Avatar')
                 .setStyle(5)
-                .setURL(member.user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }));
+                .setURL(avatarURL);
 
+            const bannerURL = fetchedUser.bannerURL({ size: 1024 }) || 'https://example.com/default-banner.jpg';
             const bannerButton = new ButtonBuilder()
                 .setLabel('Banner')
                 .setStyle(5)
-                .setURL((await member.user.fetch()).bannerURL() || 'https://example.com/default-banner.jpg');
+                .setURL(bannerURL);
 
-            // Add buttons to an action row
             const row = new ActionRowBuilder().addComponents(avatarButton, bannerButton);
+
+            const createdAtUnix = Math.floor(member.user.createdAt.getTime() / 1000);
+            const joinedAtUnix = Math.floor(member.joinedAt.getTime() / 1000);
+
+            const presence = member.presence?.status || 'offline';
+
+            const boostSince = member.premiumSince
+                ? `<t:${Math.floor(member.premiumSince.getTime() / 1000)}:f> (${Math.round((Date.now() - member.premiumSince.getTime()) / 86400000)} days ago)`
+                : 'Not boosting';
+
+            const rolesArray = member.roles.cache
+                .filter(role => role.name !== '@everyone')
+                .sort((a, b) => b.position - a.position)
+                .map(role => role.name);
+
+            const displayedRoles = rolesArray.length > 20
+                ? rolesArray.slice(0, 20).join(', ') + `... (+${rolesArray.length - 20} more)`
+                : rolesArray.join(', ');
 
             const embed = new EmbedBuilder()
                 .setColor('#00FF00')
                 .setTitle('User Information')
-                .setThumbnail(member.user.displayAvatarURL({ format: 'png', dynamic: true }))
-                .setImage('attachment://profile.png')
+                .setThumbnail(avatarURL)
+                .setImage(imageAttachment ? 'attachment://profile.png' : null)
                 .addFields(
                     { name: 'Username', value: member.user.username, inline: true },
-                    { name: 'Discriminator', value: member.user.discriminator, inline: true },
+                    { name: 'Discriminator', value: `#${member.user.discriminator}`, inline: true },
                     { name: 'ID', value: member.id, inline: true },
                     { name: 'Nickname', value: member.nickname || 'None', inline: true },
+                    { name: 'Status', value: presence.charAt(0).toUpperCase() + presence.slice(1), inline: true },
                     { name: 'Last 5 Tags', value: usernames, inline: true },
-                    { name: 'Profile Picture', value: `[Click here](${member.user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 })})`, inline: true },
                     { name: 'Last 5 Nicknames', value: nicknames, inline: true },
-                    { name: 'Emblems', value: userFlags.length ? userFlags.map(flag => flags[flag]).join(', ') : 'None', inline: true },
-                    { name: 'Account Created', value: `<t:${Math.floor(member.user.createdAt / 1000)}:f> (${Math.round((new Date() - member.user.createdAt) / 86400000)} days ago)`, inline: false },
-                    { name: 'Joined Server', value: `<t:${Math.floor(member.joinedAt / 1000)}:f> (${Math.round((new Date() - member.joinedAt) / 86400000)} days ago)`, inline: false },
+                    { name: 'Emblems', value: userFlags.length ? userFlags.map(flag => flags[flag] ?? flag).join(', ') : 'None', inline: true },
+                    { name: 'Account Created', value: `<t:${createdAtUnix}:f> (${Math.round((Date.now() - member.user.createdAt.getTime()) / 86400000)} days ago)`, inline: false },
+                    { name: 'Joined Server', value: `<t:${joinedAtUnix}:f> (${Math.round((Date.now() - member.joinedAt.getTime()) / 86400000)} days ago)`, inline: false },
                     { name: 'Join Position', value: `${member.displayName} was the ${addSuffix(joinPosition)} person to join this server.`, inline: false },
-                    { name: 'Mutual Servers', value: getMutualServers(interaction.client, member), inline: true },
-                    { name: `Roles [${member.roles.cache.size}]`, value: getRoles(member), inline: false },
-                    { name: `Permissions [${member.permissions.toArray().length}]`, value: member.permissions.toArray().map(perm => perm.toLowerCase().replace(/_/g, ' ')).join(' » '), inline: false }
+                    { name: 'Boosting Since', value: boostSince, inline: false },
+                    { name: `Roles [${rolesArray.length}]`, value: displayedRoles || 'No roles assigned', inline: false },
+                    { name: `Permissions [${member.permissions.toArray().length}]`, value: member.permissions.toArray().map(perm => perm.toLowerCase().replace(/_/g, ' ')).join(' » ') || 'None', inline: false }
                 )
-                .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: `${interaction.user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 })}` })
-                .setTimestamp(new Date());
+                .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: interaction.user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) })
+                .setTimestamp();
 
-            // Send the reply
-            await interaction.editReply({ embeds: [embed], components: [row], files: [imageAttachment] });
+            const options = { embeds: [embed], components: [row] };
+            if (imageAttachment) options.files = [imageAttachment];
+
+            await interaction.editReply(options);
 
         } catch (error) {
-            interaction.editReply({ content: `\`❌\` There was an error generating the info for **${member}**` });
             console.error(`Error in userinfo command: ${error.message}`, error);
+            await interaction.editReply({ content: `\`❌\` There was an error generating the info for **${member.user.tag}**.` });
         }
     }
 };
-
-function getRoles(member) {
-    return member.roles.cache.size > 0 ? member.roles.cache.map(role => role.name).join(', ') : 'No roles assigned';
-}
-
-function getMutualServers(client, member) {
-    const mutualServers = client.guilds.cache.filter(a => a.members.cache.has(member.id)).map(a => a.name).join(', ');
-    return mutualServers || 'None';
-}
 
 async function getJoinPosition(guild, member) {
     const members = await guild.members.fetch();
@@ -114,6 +137,7 @@ async function getJoinPosition(guild, member) {
 }
 
 function addSuffix(number) {
+    if (!number || number <= 0) return 'Unknown';
     if (number % 100 >= 11 && number % 100 <= 13) return number + 'th';
     switch (number % 10) {
         case 1: return number + 'st';
