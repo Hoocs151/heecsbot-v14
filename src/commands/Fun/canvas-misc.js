@@ -9,15 +9,12 @@ const miscEffects = [
   "lied",
   "lolice",
   "namecard",
-  "nobitches",
   "oogway",
   "oogway2",
   "simpcard",
   "tonikawa",
   "tweet",
   "youtube-comment",
-  "pansexual",
-  "transgender",
 ];
 
 module.exports = {
