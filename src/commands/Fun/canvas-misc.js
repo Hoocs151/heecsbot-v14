@@ -4,10 +4,7 @@ const fetch = require("node-fetch");
 const miscEffects = [
   "circle",
   "heart",
-  "horny",
-  "its-so-stupid",
   "lied",
-  "lolice",
   "namecard",
   "oogway",
   "oogway2",
